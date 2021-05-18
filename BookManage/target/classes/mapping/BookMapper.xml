@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.BookMapper">
+
+    <resultMap type="com.model.Book" id="resultMap">
+        <id column="BOOK_ISBN" property="bookIsbn"/>
+        <id column="BOOK_ID" property="bookId"/>
+        <result column="BOOK_NAME" property="bookName"/>
+        <result column="BOOKCASE_ID" property="bookcaseId"/>
+        <result column="BOOK_STATE" property="bookState"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="BOOK_LOCATION" property="bookLocation"/>
+    </resultMap>
+
+    <parameterMap type="com.model.Book" id="parameterMap">
+        <parameter property="bookIsbn" resultMap="resultMap" />
+        <parameter property="bookId" resultMap="resultMap" />
+        <parameter property="bookName" resultMap="resultMap" />
+        <parameter property="bookcaseId" resultMap="resultMap" />
+        <parameter property="bookState" resultMap="resultMap" />
+        <parameter property="createTime" resultMap="resultMap" />
+        <parameter property="bookLocation" resultMap="resultMap" />
+    </parameterMap>
+
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM BOOK
+        <where>
+            <if test="BOOK_ISBN != null and BOOK_ISBN != ''">
+                and BOOK_ISBN = #{BOOK_ISBN}
+            </if>
+            <if test="BOOK_ID != null and BOOK_ID != ''">
+                and BOOK_ID = #{BOOK_ID}
+            </if>
+            <if test="BOOK_NAME != null and BOOK_NAME != ''">
+                and LOCATE(#{BOOK_NAME},BOOK_NAME)>0
+            </if>
+        </where>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultMap="resultMap">
+        SELECT BOOK_ISBN, BOOK_ID, BOOK_NAME, BOOKCASE_ID, BOOK_STATE, CREATE_TIME FROM BOOK
+        <where>
+            <if test="BOOK_ISBN != null and BOOK_ISBN != ''">
+                and BOOK_ISBN = #{BOOK_ISBN}
+            </if>
+            <if test="BOOK_ID != null and BOOK_ID != ''">
+                and BOOK_ID = #{BOOK_ID}
+            </if>
+            <if test="BOOK_NAME != null and BOOK_NAME != ''">
+                and LOCATE(#{BOOK_NAME},BOOK_NAME)>0
+            </if>
+        </where>
+        ORDER BY CREATE_TIME DESC
+        LIMIT #{OFFSET},#{PAGE_SIZE}
+    </select>
+
+    <insert id="insert" parameterMap="parameterMap">
+        INSERT INTO BOOK
+            (BOOK_ISBN, BOOK_ID, BOOK_NAME, BOOKCASE_ID, BOOK_STATE, CREATE_TIME)
+            VALUES
+            (#{bookIsbn}, #{bookId}, #{bookName}, #{bookcaseId}, #{bookState}, #{createTime})
+    </insert>
+
+    <update id="update" parameterMap="parameterMap">
+        UPDATE BOOK SET
+            BOOK_NAME = #{bookName},
+            BOOKCASE_ID = #{bookcaseId},
+            BOOK_STATE = #{bookState}
+            WHERE BOOK_ISBN=#{bookIsbn} AND BOOK_ID = #{bookId}
+    </update>
+
+    <delete id="del">
+        DELETE FROM BOOK WHERE BOOK_ISBN = #{BOOK_ISBN} AND BOOK_ID=#{BOOK_ID}
+    </delete>
+
+    <delete id="delByBookIsbn">
+        DELETE FROM BOOK WHERE BOOK_ISBN = #{BOOK_ISBN}
+    </delete>
+
+    <select id="qryByBookIsbn" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT BOOK_ISBN, BOOK_ID, BOOK_NAME, BOOKCASE_ID, BOOK_STATE, CREATE_TIME
+         FROM BOOK WHERE BOOK_ISBN=#{BOOK_ISBN}
+    </select>
+
+    <select id="qryById" resultMap="resultMap">
+        SELECT BOOK_ISBN, BOOK_ID, BOOK_NAME, BOOKCASE_ID, BOOK_STATE, CREATE_TIME
+         FROM BOOK WHERE BOOK_ISBN=#{BOOK_ISBN} AND BOOK_ID=#{BOOK_ID}
+    </select>
+
+    <select id="listAll" resultMap="resultMap">
+        SELECT BOOK_ISBN, BOOK_ID, BOOK_NAME, BOOKCASE_ID, BOOK_STATE, CREATE_TIME FROM BOOK
+    </select>
+
+    <select id="qryByBookcase" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM BOOK
+        <where>
+            BOOKCASE_ID in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+
+    <select id="selectposition" parameterType="java.util.Map" resultMap="resultMap">
+        SELECT * FROM BOOK
+        <where>
+            BOOKCASE_ID=#{BOOKCASE_ID}
+        </where>
+        ORDER BY BOOK_LOCATION
+    </select>
+</mapper>

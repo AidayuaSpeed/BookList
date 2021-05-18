@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="description" content="IM即时通讯"/>
+    <meta name="keywords" content=""/>
+    <meta name="author" content="yunbamboo, 1115370641@qq.com"/>
+    <meta name="keywords" content="JAVA图书管理,JAVA图书借阅管理系统">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <title>JAVA图书借阅管理系统</title>
+    <link rel="stylesheet" type="text/css" href="../../css/css.css" />
+    <script type="text/javascript" src="../../js/jquery-1.7.2/jquery.min.js"></script>
+</head>
+<body>
+    <div id="view" class="view">
+        <!--检索条件-->
+        <div class="conditionpanel">
+            <label for="userIdCondition"></label><input id="userIdCondition" type="text" placeholder="请输入用户账号">
+            <label for="userNameCondition"></label><input id="userNameCondition" type="text" placeholder="请输入用户名称">
+            <a id="qryBtn" class="button">查询</a>
+        </div>
+        <!--按钮框-->
+        <div class="buttonpanel">
+            <a id="batchDelBtn" class="button" style="margin-left: 5px;height: 34px;background-color: #fd5f56;line-height: 34px;">批量删除</a>
+            <a id="addBtn" class="button" style="margin-left: 15px;height: 34px;line-height: 34px;">添加</a>
+        </div>
+        <div id="tablepanel" class="tablepanel">
+        </div>
+    </div>
+    <div id="maskLayer" class="maskLayer" style="display: none;"></div>
+    <div id="alertPanel" class="alertPanel" style="display: none"></div>
+
+    <!--添加修改 弹出框-->
+    <div id="dialog" class="dialog" style="display:none;width: 700px;height: 330px;margin-top:-230px;margin-left:-350px;background-color:#EBF2F9">
+        <!--弹出框标题-->
+        <div style="width: 100%;height: 30px;line-height: 30px;">
+            <span class="title">添加</span>
+            <div class="close">×</div>
+        </div>
+        <!--弹出框内容-->
+        <div style="width: 100%;height: 270px;">
+            <div class="form">
+                <!--用户账号-->
+                <div id="USER_ID_ITEM" class="form-item">
+                    <label class="form-label" for="USER_ID">
+                        <span style="color: red;">*</span>
+                        用户账号
+                    </label>
+                    <div class="input-inline">
+                        <input type="text" id="USER_ID" maxlength="10">
+                    </div>
+                    <div class="form-mid word-aux">
+                        <span style="color: red;">*</span>
+                        必填
+                    </div>
+                </div>
+                <!--用户昵称-->
+                <div id="USER_NAME_ITEM" class="form-item">
+                    <label class="form-label" for="USER_NAME">
+                        <span style="color: red;">*</span>
+                        用户昵称
+                    </label>
+                    <div class="input-inline">
+                        <input type="text" id="USER_NAME">
+                    </div>
+                    <div class="form-mid word-aux">
+                        <span style="color: red;">*</span>
+                        必填
+                    </div>
+                </div>
+                <!--用户旧密码-->
+                <div id="OLD_USER_PWD_ITEM" class="form-item">
+                    <label class="form-label" for="OLD_USER_PWD">
+                        <span style="color: red;">*</span>
+                        用户旧密码
+                    </label>
+                    <div class="input-inline">
+                        <input type="password" id="OLD_USER_PWD">
+                    </div>
+                    <div class="form-mid word-aux">
+                        <span style="color: red;">*</span>
+                        必填
+                    </div>
+                </div>
+                <!--用户密码-->
+                <div id="USER_PWD_ITEM" class="form-item">
+                    <label class="form-label" for="USER_PWD">
+                        <span style="color: red;">*</span>
+                        用户密码
+                    </label>
+                    <div class="input-inline">
+                        <input type="password" id="USER_PWD">
+                    </div>
+                    <div class="form-mid word-aux">
+                        <span style="color: red;">*</span>
+                        必填
+                    </div>
+                </div>
+                <!--二次输入用户密码-->
+                <div id="USER_PWD_CONFIRM_ITEM" class="form-item">
+                    <label class="form-label" for="USER_PWD_CONFIRM">
+                        <span style="color: red;">*</span>
+                        确认密码
+                    </label>
+                    <div class="input-inline">
+                        <input type="password" id="USER_PWD_CONFIRM">
+                    </div>
+                    <div class="form-mid word-aux">
+                        <span style="color: red;">*</span>
+                        必填
+                    </div>
+                </div>
+                <div class="form-item" style="text-align: center;margin-top: 30px;">
+                    <a id="addConfirmBtn" class="button">添加</a>
+                    <a id="updateConfirmBtn" class="button">修改</a>
+                    <a id="pwdConfirmBtn" class="button">密码修改</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--授权 弹出框-->
+    <div id="authorizeDialog" class="dialog" style="display:none;width: 700px;height: 330px;margin-top:-230px;margin-left:-350px;background-color:#25282f">
+        <div style="width: 100%;height: 30px;line-height: 30px;">
+            <span class="title" style="color: #EBF2F9;">授权管理</span>
+            <div class="close">×</div>
+        </div>
+        <div style="width: 100%;height: 270px;">
+            <div style="width: 100%;height: 40px;line-height: 40px;margin-top: 5px;">
+                <label style="margin-left: 20px;"><input type="checkbox" id="USER_ADMIN">&nbsp;&nbsp;设置为用户授权管理员</label>
+            </div>
+            <div style="width: 100%;height: 40px;line-height: 40px;margin-top: 5px;">
+                <label style="margin-left: 20px;">功能菜单列表</label>
+            </div>
+            <div id="MENU_LIST" style="width: 100%;height: 80px;line-height: 40px;margin-top: 5px;">
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1001">&nbsp;&nbsp;读者类型管理</label>
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1002">&nbsp;&nbsp;读者管理</label>
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1003">&nbsp;&nbsp;借阅记录</label>
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1004">&nbsp;&nbsp;书架管理</label>
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1005">&nbsp;&nbsp;书刊类型管理</label>
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1006">&nbsp;&nbsp;书刊目录</label>
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1007">&nbsp;&nbsp;图书复本管理</label>
+                <label style="margin-left: 30px;float: left;"><input type="checkbox" MENU_ID="1008">&nbsp;&nbsp;用户管理</label>
+            </div>
+            <div style="width: 100%;height: 40px;line-height: 40px;margin-top: 20px;text-align: center;">
+                <input type="hidden" id="AUTH_USER_ID">
+                <a id="authorizeSaveBtn" class="button">保存</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="../../js/core.js"></script>
+    <script type="text/javascript" src="../../js/jquery-1.7.2/jquery.nicescroll.js"></script>
+    <script type="text/javascript" src="user.js"></script>
+</body>
+</html>

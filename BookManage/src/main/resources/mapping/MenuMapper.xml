@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.MenuMapper">
+
+    <resultMap type="com.model.Menu" id="resultMap">
+        <id column="MENU_ID" property="menuId"/>
+        <result column="MENU_NAME" property="menuName"/>
+        <result column="MENU_URL" property="menuUrl"/>
+    </resultMap>
+
+    <parameterMap type="com.model.Menu" id="parameterMap">
+        <parameter property="menuId" resultMap="resultMap" />
+        <parameter property="menuName" resultMap="resultMap" />
+        <parameter property="menuUrl" resultMap="resultMap" />
+    </parameterMap>
+
+    <select id="qryByUserId" parameterType="java.lang.String" resultMap="resultMap">
+    	SELECT M.MENU_ID, M.MENU_NAME, M.MENU_URL FROM MENU M,USER_MENU_REF U WHERE M.MENU_ID=U.MENU_ID AND U.USER_ID=#{USER_ID}
+    </select>
+
+    <insert id="insertRef">
+        INSERT INTO USER_MENU_REF(USER_ID, MENU_ID) VALUES (#{USER_ID}, #{MENU_ID})
+    </insert>
+
+    <delete id="delRef">
+        DELETE FROM USER_MENU_REF WHERE USER_ID=#{USER_ID} AND MENU_ID=#{MENU_ID}
+    </delete>
+
+    <delete id="delByUserId" parameterType="java.lang.String">
+        DELETE FROM USER_MENU_REF WHERE USER_ID=#{USER_ID}
+    </delete>
+
+</mapper>

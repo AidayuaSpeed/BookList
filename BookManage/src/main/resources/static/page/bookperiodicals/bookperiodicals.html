@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="description" content="IM即时通讯"/>
+    <meta name="keywords" content=""/>
+    <meta name="author" content="yunbamboo, 1115370641@qq.com"/>
+    <meta name="keywords" content="JAVA图书管理,JAVA图书借阅管理系统">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <title>JAVA图书借阅管理系统</title>
+    <link rel="stylesheet" type="text/css" href="../../css/css.css" />
+    <script type="text/javascript" src="../../js/jquery-1.7.2/jquery.min.js"></script>
+</head>
+<body>
+    <div id="view" class="view">
+        <!--检索条件-->
+        <div class="conditionpanel">
+            <label for="bookIsbnCondition"></label><input id="bookIsbnCondition" type="text" placeholder="请输入图书ISBN">
+            <label for="bookNameCondition"></label><input id="bookNameCondition" type="text" placeholder="请输入书刊名称">
+            <a id="qryBtn" class="button">查询</a>
+        </div>
+        <!--按钮框-->
+        <div class="buttonpanel">
+            <a id="batchDelBtn"  class="button" style="margin-left: 5px;height: 34px;background-color: #fd5f56;line-height: 34px;">批量删除</a>
+            <a id="addBtn"  class="button" style="margin-left: 15px;height: 34px;line-height: 34px;">添加</a>
+        </div>
+        <div id="tablepanel" class="tablepanel">
+        </div>
+    </div>
+    <div id="maskLayer" class="maskLayer" style="display: none;"></div>
+    <div id="alertPanel" class="alertPanel" style="display: none"></div>
+    <div id="mask" class="mask"  style="display: none;">
+        <div>数据加载中...</div>
+    </div>
+
+    <!--添加修改 弹出框-->
+    <div id="dialog" class="dialog" style="display:none;width: 1050px;height: 800px;margin-top:-400px;margin-left:-400px;background-color:#EBF2F9">
+        <!--弹出框标题-->
+        <div style="width: 100%;height: 30px;line-height: 30px;">
+            <span class="title">添加</span>
+            <div class="close">×</div>
+        </div>
+        <div style="width: 100%;height: 40px;line-height: 40px;color: #2a2f31;">
+            <label for="BOOK_ISBN" style="width: 100px;display: inline-block;margin-left: 50px;text-align: right;">ISBN:</label>
+            <input type="text" id="BOOK_ISBN" style="margin-left: 20px;margin-right: 20px;" maxlength="20" placeholder="输入ISBN">
+            <a id="searchBtn" class="button">网络检索</a>
+            <span style="color: #999 !important;font-size: 14px;margin-left: 5px;">输入图书ISBN编码通过网络接口回填图书信息</span>
+            <input type="hidden" id="BOOK_ISBN_HIDDEN">
+        </div>
+        <!--弹出框内容-->
+        <div style="width: 100%;height: 360px;display: block;">
+            <div style="width: 240px;height: 360px;float: left;display:block;">
+                <img id="BOOK_IMAGE" src="" alt=""  style="margin:50px 40px;width: 160px;height: 220px;" title="图书图片">
+            </div>
+            <div style="width: 400px;height: 360px;float: left;display: block;">
+                <div class="form" style="float: left;">
+                    <!--书刊名称-->
+                    <div class="form-item">
+                        <label class="form-label" for="BOOK_NAME">
+                            书刊名称
+                        </label>
+                        <div class="input-inline">
+                            <input type="text" id="BOOK_NAME" readonly>
+                        </div>
+                        <div class="form-mid word-aux">
+                        </div>
+                    </div>
+                    <!--书刊作者-->
+                    <div class="form-item">
+                        <label class="form-label" for="BOOK_AUTHOR">
+                            书刊作者
+                        </label>
+                        <div class="input-inline">
+                            <input type="text" id="BOOK_AUTHOR" readonly>
+                        </div>
+                        <div class="form-mid word-aux">
+                        </div>
+                    </div>
+                    <!--出版社-->
+                    <div class="form-item">
+                        <label class="form-label" for="PUBLISHER">
+                            出版社
+                        </label>
+                        <div class="input-inline">
+                            <input type="text" id="PUBLISHER" readonly>
+                        </div>
+                        <div class="form-mid word-aux">
+                        </div>
+                    </div>
+                    <!--出版时间-->
+                    <div class="form-item">
+                        <label class="form-label" for="PUBLISHING_TIME">
+                            出版时间
+                        </label>
+                        <div class="input-inline">
+                            <input type="text" id="PUBLISHING_TIME" readonly>
+                        </div>
+                        <div class="form-mid word-aux">
+                        </div>
+                    </div>
+                    <!--价钱-->
+                    <div class="form-item">
+                        <label class="form-label" for="BOOK_PRICE">
+                            书刊价钱
+                        </label>
+                        <div class="input-inline">
+                            <input type="text" id="BOOK_PRICE">
+                        </div>
+                        <div class="form-mid word-aux">
+                        </div>
+                    </div>
+                    <!--书刊类型-->
+                    <div class="form-item">
+                        <label class="form-label" for="TYPE_ID">
+                            <span style="color: red;">*</span>书刊类型
+                        </label>
+                        <div class="input-inline">
+                            <select id="TYPE_ID"  ></select>
+                        </div>
+                        <div class="form-mid word-aux">
+                            <span style="color: red;">*</span>必填
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="width: 410px;height: 360px;float: left;display:block;">
+                <div class="form-item">
+                    <label class="form-label" for="BOOK_INTRO" >
+                        <span style="color: black;">书刊简介</span>
+                    </label>
+                    <div class="text" >
+                        <textarea style="width: 380px;height: 360px; font-size:22px "type="textarea" id="BOOK_INTRO" readonly>
+                        </textarea>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%;height: 40px;line-height: 40px;color: #2a2f31;">
+            <a id="addBookBtn" class="button" style="margin-left: 50px;margin-right: 150px;">添加新图书复本</a>
+            <a id="addConfirmBtn" class="button">保存</a>
+            <a id="updateConfirmBtn" class="button">修改</a>
+        </div>
+        <div style="width: 100%;height: 30px;line-height: 30px;color: #2a2f31;">
+            <label style="margin-left: 10px;">图书复本列表</label>
+        </div>
+        <div id="bookTablepanel" style="width: 100%;height: 300px;background: rgba(45, 48, 53,.7);">
+            <table style="width: 100%;height: 100%;">
+                <thead>
+                    <tr style="height: 40px;">
+                        <th>图书自编码</th>
+                        <th>图书状态</th>
+                        <th>所在书架</th>
+                        <th>登记日期</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--添加图书复本 弹出框-->
+    <div id="bookDialog" class="dialog" style="display:none;width: 400px;height: 300px;margin-top:-150px;margin-left:-200px;background-color:#8b9299;z-index:1000;">
+        <!--弹出框标题-->
+        <div style="width: 100%;height: 30px;line-height: 30px;">
+            <span class="title">添加</span>
+            <div class="close">×</div>
+        </div>
+        <div style="width: 100%;height: 40px;line-height: 40px;color: #2a2f31;">
+            <div class="form" style="float: left;">
+                <!--图书自编码-->
+                <div class="form-item">
+                    <label class="form-label" for="BOOK_ID">
+                        图书自编码
+                    </label>
+                    <div class="input-inline">
+                        <input type="text" id="BOOK_ID" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">
+                    </div>
+                    <div class="form-mid word-aux">
+                    </div>
+                </div>
+                <!--图书书架-->
+                <div class="form-item">
+                    <label class="form-label" for="BOOKCASE_ID">
+                        图书书架
+                    </label>
+                    <div class="input-inline">
+                        <select id="BOOKCASE_ID"   onchange="getSelect(this.options[this.options.selectedIndex].value)"></select>
+                    </div>
+                    <div class="form-mid word-aux">
+                    </div>
+                </div>
+
+                <!--书籍所在书架位置-->
+                <div class="form-item">
+                    <label class="form-label" for="BOOK_LOCATION" >
+                        选择图书书架号
+                    </label>
+                    <div class="input-inline">
+                        <select id="BOOK_LOCATION"  ></select>
+                    </div>
+                    <div class="form-mid word-aux">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="width: 100%;height: 40px;line-height: 40px;color: #2a2f31;text-align: center;">
+            <a id="bookAddConfirmBtn" class="button">保存</a>
+            <a id="bookUpdateConfirmBtn" class="button">修改</a>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="../../js/core.js"></script>
+    <script type="text/javascript" src="../../js/jquery-1.7.2/jquery.nicescroll.js"></script>
+    <script type="text/javascript" src="bookperiodicals.js"></script>
+</body>
+</html>

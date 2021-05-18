@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.ReaderMapper">
+
+    <resultMap type="com.model.Reader" id="resultMap">
+        <id column="READER_ID" property="readerId"/>
+        <result column="READER_NAME" property="readerName"/>
+        <result column="READER_SEX" property="readerSex"/>
+        <result column="READER_EMAIL" property="readerEmail"/>
+        <result column="READER_PHONE" property="readerPhone"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="READER_TYPE" property="readerType"/>
+        <result column="OPERATOR_ID" property="operatorId"/>
+    </resultMap>
+
+    <parameterMap type="com.model.Reader" id="parameterMap">
+        <parameter property="readerId" resultMap="resultMap" />
+        <parameter property="readerName" resultMap="resultMap" />
+        <parameter property="readerSex" resultMap="resultMap" />
+        <parameter property="readerEmail" resultMap="resultMap" />
+        <parameter property="readerPhone" resultMap="resultMap" />
+        <parameter property="createTime" resultMap="resultMap" />
+        <parameter property="readerType" resultMap="resultMap" />
+        <parameter property="operatorId" resultMap="resultMap" />
+    </parameterMap>
+    
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(READER_ID) FROM READER 
+        <where>
+            <if test="READER_ID != null and READER_ID != ''">
+                and READER_ID = #{READER_ID}
+            </if>
+            <if test="READER_NAME != null and READER_NAME != ''">
+                and LOCATE(#{READER_NAME},READER_NAME)>0
+            </if>
+        </where>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultMap="resultMap">
+        SELECT READER_ID, READER_NAME, READER_SEX, READER_EMAIL, READER_PHONE, CREATE_TIME, READER_TYPE, OPERATOR_ID  FROM READER
+        <where>
+            <if test="READER_ID != null and READER_ID != ''">
+                and READER_ID = #{READER_ID}
+            </if>
+            <if test="READER_NAME != null and READER_NAME != ''">
+                and LOCATE(#{READER_NAME},READER_NAME)>0
+            </if>
+        </where>
+        ORDER BY CREATE_TIME DESC
+        LIMIT #{OFFSET},#{PAGE_SIZE}
+    </select>
+
+    <insert id="insert" parameterMap="parameterMap">
+        INSERT INTO READER
+            (READER_ID, READER_NAME, READER_SEX, READER_EMAIL, READER_PHONE, CREATE_TIME, READER_TYPE, OPERATOR_ID)
+            VALUES
+            (#{readerId}, #{readerName}, #{readerSex}, #{readerEmail}, #{readerPhone}, #{createTime}, #{readerType}, #{operatorId})
+    </insert>
+
+    <update id="update" parameterMap="parameterMap">
+        UPDATE READER SET
+            READER_NAME = #{readerName},
+            READER_SEX = #{readerSex},
+            READER_EMAIL = #{readerEmail},
+            READER_PHONE = #{readerPhone},
+            READER_TYPE = #{readerType}
+            WHERE READER_ID = #{readerId}
+    </update>
+    
+    <delete id="del" parameterType="java.util.List">
+        DELETE FROM READER 
+        <where>
+            READER_ID in 
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="qryById" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT READER_ID, READER_NAME, READER_SEX, READER_EMAIL, READER_PHONE, CREATE_TIME, READER_TYPE, OPERATOR_ID  FROM READER WHERE READER_ID=#{READER_ID}
+    </select>
+
+    <select id="listAll" resultMap="resultMap">
+        SELECT READER_ID, READER_NAME, READER_SEX, READER_EMAIL, READER_PHONE, CREATE_TIME, READER_TYPE, OPERATOR_ID FROM READER
+    </select>
+
+    <select id="qryByReaderType" resultType="java.lang.Integer">
+        SELECT COUNT(READER_ID) FROM READER
+        <where>
+            READER_TYPE in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+</mapper>

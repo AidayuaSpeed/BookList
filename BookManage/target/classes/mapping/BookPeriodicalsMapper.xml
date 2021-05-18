@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.BookPeriodicalsMapper">
+
+    <resultMap type="com.model.BookPeriodicals" id="resultMap">
+        <id column="BOOK_ISBN" property="bookIsbn"/>
+        <result column="BOOK_NAME" property="bookName"/>
+        <result column="BOOK_AUTHOR" property="bookAuthor"/>
+        <result column="PUBLISHER" property="publisher"/>
+        <result column="PUBLISHING_TIME" property="publishingTime"/>
+        <result column="BOOK_IMAGE" property="bookImage"/>
+        <result column="BOOK_PRICE" property="bookPrice"/>
+        <result column="TYPE_ID" property="typeId"/>
+        <result column="CREATE_TIME" property="createTime"/>
+        <result column="BOOK_NUM" property="bookNum"/>
+        <result column="BORROW_NUM" property="borrowNum"/>
+        <result column="BOOK_INTRO" property="bookIntro"/>
+    </resultMap>
+
+    <parameterMap type="com.model.BookPeriodicals" id="parameterMap">
+        <parameter property="bookIsbn" resultMap="resultMap" />
+        <parameter property="bookName" resultMap="resultMap" />
+        <parameter property="bookAuthor" resultMap="resultMap" />
+        <parameter property="publisher" resultMap="resultMap" />
+        <parameter property="publishingTime" resultMap="resultMap" />
+        <parameter property="bookImage" resultMap="resultMap" />
+        <parameter property="bookPrice" resultMap="resultMap" />
+        <parameter property="typeId" resultMap="resultMap" />
+        <parameter property="createTime" resultMap="resultMap" />
+        <parameter property="bookNum" resultMap="resultMap" />
+        <parameter property="borrowNum" resultMap="resultMap" />
+    </parameterMap>
+
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(BOOK_ISBN) FROM BOOK_PERIODICALS
+        <where>
+            <if test="BOOK_ISBN != null and BOOK_ISBN != ''">
+                and BOOK_ISBN = #{BOOK_ISBN}
+            </if>
+            <if test="BOOK_NAME != null and BOOK_NAME != ''">
+                and LOCATE(#{BOOK_NAME},BOOK_NAME)>0
+            </if>
+        </where>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultMap="resultMap">
+        SELECT BOOK_ISBN, BOOK_NAME, BOOK_AUTHOR, PUBLISHER,
+                PUBLISHING_TIME, BOOK_IMAGE, BOOK_PRICE, TYPE_ID,
+                CREATE_TIME, BOOK_NUM, BORROW_NUM
+          FROM BOOK_PERIODICALS
+        <where>
+            <if test="BOOK_ISBN != null and BOOK_ISBN != ''">
+                and BOOK_ISBN = #{BOOK_ISBN}
+            </if>
+            <if test="BOOK_NAME != null and BOOK_NAME != ''">
+                and LOCATE(#{BOOK_NAME},BOOK_NAME)>0
+            </if>
+        </where>
+        ORDER BY CREATE_TIME DESC
+        LIMIT #{OFFSET},#{PAGE_SIZE}
+    </select>
+
+    <insert id="insert" parameterMap="parameterMap">
+        INSERT INTO BOOK_PERIODICALS
+            (BOOK_ISBN, BOOK_NAME, BOOK_AUTHOR, PUBLISHER,
+                PUBLISHING_TIME, BOOK_IMAGE, BOOK_PRICE, TYPE_ID,
+                CREATE_TIME, BOOK_NUM, BORROW_NUM,BOOK_INTRO)
+            VALUES
+            (#{bookIsbn}, #{bookName}, #{bookAuthor}, #{publisher},
+            #{publishingTime}, #{bookImage}, #{bookPrice}, #{typeId},
+            #{createTime}, #{bookNum}, #{borrowNum},#{bookIntro})
+    </insert>
+
+    <update id="update" parameterMap="parameterMap">
+        UPDATE BOOK_PERIODICALS SET
+            BOOK_NAME = #{bookName},
+            BOOK_AUTHOR = #{bookAuthor},
+            PUBLISHER = #{publisher},
+            PUBLISHING_TIME = #{publishingTime},
+            BOOK_IMAGE = #{bookImage},
+            BOOK_PRICE = #{bookPrice},
+            TYPE_ID = #{typeId},
+            BOOK_NUM = #{bookNum},
+            BORROW_NUM = #{borrowNum}
+            WHERE BOOK_ISBN = #{bookIsbn}
+    </update>
+
+    <delete id="del" parameterType="java.lang.String">
+        DELETE FROM BOOK_PERIODICALS where BOOK_ISBN=#{BOOK_ISBN}
+    </delete>
+
+    <select id="qryById" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT BOOK_ISBN, BOOK_NAME, BOOK_AUTHOR, PUBLISHER,
+                PUBLISHING_TIME, BOOK_IMAGE, BOOK_PRICE, TYPE_ID,
+                CREATE_TIME, BOOK_NUM, BORROW_NUM  FROM BOOK_PERIODICALS WHERE BOOK_ISBN=#{BOOK_ISBN}
+    </select>
+
+
+    <select id="qryByBookType" resultType="java.lang.Integer">
+        SELECT COUNT(BOOK_ISBN) FROM BOOK_PERIODICALS
+        <where>
+            TYPE_ID in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+</mapper>

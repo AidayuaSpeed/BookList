@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.BookTypeMapper">
+
+    <resultMap type="com.model.BookType" id="resultMap">
+        <id column="TYPE_ID" property="typeId"/>
+        <result column="TYPE_NAME" property="typeName"/>
+        <result column="TYPE_DES" property="typeDes"/>
+        <result column="MODIFY_TIME" property="modifyTime"/>
+    </resultMap>
+
+    <parameterMap type="com.model.BookType" id="parameterMap">
+        <parameter property="typeId" resultMap="resultMap" />
+        <parameter property="typeName" resultMap="resultMap" />
+        <parameter property="typeDes" resultMap="resultMap" />
+        <parameter property="modifyTime" resultMap="resultMap" />
+    </parameterMap>
+
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(TYPE_ID) FROM BOOKTYPE
+        <where>
+            <if test="TYPE_ID != null and TYPE_ID != ''">
+                and TYPE_ID = #{TYPE_ID}
+            </if>
+            <if test="TYPE_NAME != null and TYPE_NAME != ''">
+                and LOCATE(#{TYPE_NAME},TYPE_NAME)>0
+            </if>
+        </where>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultMap="resultMap">
+        SELECT TYPE_ID, TYPE_NAME, TYPE_DES, MODIFY_TIME  FROM BOOKTYPE
+        <where>
+            <if test="TYPE_ID != null and TYPE_ID != ''">
+                and TYPE_ID = #{TYPE_ID}
+            </if>
+            <if test="TYPE_NAME != null and TYPE_NAME != ''">
+                and LOCATE(#{TYPE_NAME},TYPE_NAME)>0
+            </if>
+        </where>
+        ORDER BY MODIFY_TIME DESC
+        LIMIT #{OFFSET},#{PAGE_SIZE}
+    </select>
+
+    <insert id="insert" parameterMap="parameterMap">
+        INSERT INTO BOOKTYPE
+            (TYPE_ID, TYPE_NAME, TYPE_DES, MODIFY_TIME)
+            VALUES
+            (#{typeId}, #{typeName}, #{typeDes}, #{modifyTime})
+    </insert>
+
+    <update id="update" parameterMap="parameterMap">
+        UPDATE BOOKTYPE SET
+            TYPE_NAME = #{typeName},
+            TYPE_DES = #{typeDes},
+            MODIFY_TIME = #{modifyTime}
+            WHERE TYPE_ID = #{typeId}
+    </update>
+
+    <delete id="del" parameterType="java.util.List">
+        DELETE FROM BOOKTYPE
+        <where>
+            TYPE_ID in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="qryById" parameterType="java.lang.String" resultMap="resultMap">
+        SELECT TYPE_ID, TYPE_NAME, TYPE_DES, MODIFY_TIME FROM BOOKTYPE WHERE TYPE_ID=#{TYPE_ID}
+    </select>
+
+    <select id="listAll" resultMap="resultMap">
+        SELECT TYPE_ID, TYPE_NAME, TYPE_DES, MODIFY_TIME FROM BOOKTYPE
+    </select>
+</mapper>

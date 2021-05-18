@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.BorrowRecordMapper">
+
+    <resultMap type="com.model.BorrowRecord" id="resultMap">
+        <id column="RECORD_ID" property="recordId"/>
+        <result column="BOOK_ID" property="bookId"/>
+        <result column="BOOK_ISBN" property="bookIsbn"/>
+        <result column="READER_ID" property="readerId"/>
+        <result column="BORROW_TIME" property="borrowTime"/>
+        <result column="BACK_TIME" property="backTime"/>
+        <result column="BORROW_OPERATOR_ID" property="borrowOperatorId"/>
+        <result column="STATE" property="state"/>
+        <result column="GIVEBACK_TIME" property="giveBackTime"/>
+        <result column="GIVEBACK_OPERATOR_ID" property="giveBackOperatorId"/>
+        <result column="UPDATE_TIME" property="updateTime"/>
+    </resultMap>
+
+    <parameterMap type="com.model.BorrowRecord" id="parameterMap">
+        <parameter property="recordId" resultMap="resultMap" />
+        <parameter property="bookIsbn" resultMap="resultMap" />
+        <parameter property="bookId" resultMap="resultMap" />
+        <parameter property="readerId" resultMap="resultMap" />
+        <parameter property="borrowTime" resultMap="resultMap" />
+        <parameter property="backTime" resultMap="resultMap" />
+        <parameter property="borrowOperatorId" resultMap="resultMap" />
+        <parameter property="state" resultMap="resultMap" />
+        <parameter property="giveBackTime" resultMap="resultMap" />
+        <parameter property="giveBackOperatorId" resultMap="resultMap" />
+        <parameter property="updateTime" resultMap="resultMap" />
+    </parameterMap>
+
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(RECORD_ID) FROM BORROW_RECORD
+        <where>
+            <if test="BOOK_ISBN != null and BOOK_ISBN != ''">
+                and BOOK_ISBN = #{BOOK_ISBN}
+            </if>
+            <if test="BOOK_ID != null and BOOK_ID != ''">
+                and BOOK_ID = #{BOOK_ID}
+            </if>
+            <if test="READER_ID != null and READER_ID != ''">
+                and READER_ID=#{READER_ID}
+            </if>
+        </where>
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultMap="resultMap">
+        SELECT RECORD_ID, BOOK_ISBN, BOOK_ID, READER_ID, BORROW_TIME, BACK_TIME,
+        BORROW_OPERATOR_ID, STATE, GIVEBACK_TIME, GIVEBACK_OPERATOR_ID, UPDATE_TIME
+        FROM BORROW_RECORD
+        <where>
+            <if test="BOOK_ISBN != null and BOOK_ISBN != ''">
+                and BOOK_ISBN = #{BOOK_ISBN}
+            </if>
+            <if test="BOOK_ID != null and BOOK_ID != ''">
+                and BOOK_ID = #{BOOK_ID}
+            </if>
+            <if test="READER_ID != null and READER_ID != ''">
+                and READER_ID=#{READER_ID}
+            </if>
+        </where>
+        ORDER BY UPDATE_TIME DESC
+        LIMIT #{OFFSET},#{PAGE_SIZE}
+    </select>
+
+    <insert id="insert" parameterMap="parameterMap" useGeneratedKeys="true" keyProperty="recordId">
+        INSERT INTO BORROW_RECORD
+            (BOOK_ISBN, BOOK_ID, READER_ID, BORROW_TIME, BACK_TIME,
+                BORROW_OPERATOR_ID, STATE, GIVEBACK_TIME, GIVEBACK_OPERATOR_ID, UPDATE_TIME)
+            VALUES
+            (#{bookIsbn}, #{bookId}, #{readerId}, #{borrowTime}, #{backTime},
+            #{borrowOperatorId}, #{state}, #{giveBackTime}, #{giveBackOperatorId},#{updateTime})
+    </insert>
+
+    <update id="update" parameterMap="parameterMap">
+        UPDATE BORROW_RECORD SET
+            STATE = #{state},
+            GIVEBACK_TIME = #{giveBackTime},
+            GIVEBACK_OPERATOR_ID = #{giveBackOperatorId},
+            UPDATE_TIME = #{updateTime}
+            WHERE RECORD_ID = #{recordId}
+    </update>
+
+    <select id="qryById" parameterType="java.lang.Integer" resultMap="resultMap">
+        SELECT RECORD_ID,BOOK_ISBN, BOOK_ID, READER_ID, BORROW_TIME, BACK_TIME,
+                BORROW_OPERATOR_ID, STATE, GIVEBACK_TIME, GIVEBACK_OPERATOR_ID, UPDATE_TIME
+            FROM BORROW_RECORD WHERE RECORD_ID=#{RECORD_ID}
+    </select>
+
+    <select id="qryBorrowNum" resultType="java.lang.Integer">
+        SELECT COUNT(RECORD_ID) FROM BORROW_RECORD WHERE READER_ID=#{READER_ID} AND STATE=#{STATE}
+    </select>
+
+</mapper>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="description" content="厚外智能图书柜借阅管理系统"/>
+    <meta name="keywords" content=""/>
+    <meta name="author" content="yunbamboo, 1115370641@qq.com"/>
+    <meta name="keywords" content="JAVA图书管理,JAVA图书借阅管理系统">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <title>厚外智能图书柜借阅管理系统</title>
+
+    <link rel="stylesheet" type="text/css" href="css/book.css" />
+    <script type="text/javascript" src="js/jquery-1.7.2/jquery.min.js"></script>
+
+    <link rel="icon" href="image/logo.png" type="image/x-icon" id="page_favionc">
+</head>
+<body>
+    <!--登录框-->
+    <div id="login" class="login">
+        <div class="logo">
+            <img class="img" src="image/logo.png" alt="">
+            <div class="title">厚外智能图书柜借阅管理系统</div>
+        </div>
+        <div class="login-box">
+            <div>
+                <h2 class="loginbox-title">用户登录</h2>
+                <div style="position: relative;text-align: center;">
+                    <div style="padding: 0;height: 32px;margin: 0;"></div>
+                    <div style="padding: 0 30px;width: 340px;">
+                        <!-- 用户名 -->
+                        <div class="inputbox">
+                            <div style="float: left;width: 21px;text-align: center;padding: 0 5px 0 10px;height: 100%;">
+                                <div class="user-img1" style="display: inline-block;width: 22px;height: 24px;margin-top: 12px;"></div>
+                            </div>
+                            <div style="height: 100%;position: relative;float: left;">
+                                <label for="userId"></label><input id="userId" type="text" autocomplete="off" style="height: 46px;line-height: 46px;padding-left: 8px;color: #333;border: 0;font-size: 16px;font-weight: bold;width: 293px;background-color: #fff" placeholder="请输入账号"/>
+                            </div>
+                        </div>
+                        <div style="padding: 0;height: 32px;margin: 0;"></div>
+                        <!-- 密码 -->
+                        <div class="inputbox">
+                            <div style="float: left;width: 21px;text-align: center;padding: 0 5px 0 10px;height: 100%;">
+                                <div class="user-img2" style="display: inline-block;width: 22px;height: 24px;margin-top: 12px;"></div>
+                            </div>
+                            <div style="height: 100%;position: relative;float: left;">
+                                <label for="userPwd"></label><input id="userPwd" type="password" autocomplete="new-password" style="height: 46px;line-height: 46px;padding-left: 8px;color: #333;border: 0;font-size: 16px;font-weight: bold;width: 293px;background-color: #fff" placeholder="请输入密码"/>
+                            </div>
+                        </div>
+                        <div style="padding: 0;height: 30px;margin: 0;"></div>
+                        <div style="padding: 0;height: 32px;margin: 0;">
+                            <a id="loginButton" style="width: 100%;padding: 15px 0;outline:none;" class="button">登&nbsp;&nbsp;录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--主界面-->
+    <div id="view" class="view" style="display: none;">
+        
+    </div>
+    <div id="maskLayer" class="maskLayer" style="display: none;"></div>
+    <div id="alertPanel" class="alertPanel" style="display: none"></div>
+    <script type="text/javascript" src="js/core.js"></script>
+    <script type="text/javascript" src="js/jquery-1.7.2/jquery.nicescroll.js"></script>
+    <script type="text/javascript">
+        JS.load();
+    </script>
+</body>
+</html>

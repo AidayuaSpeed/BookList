@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.UserMapper">
+ 
+	<resultMap type="com.model.User" id="resultMap">
+		<id column="USER_ID" property="userId"/>
+		<result column="USER_NAME" property="userName"/>
+		<result column="USER_PWD" property="userPwd"/>
+        <result column="CREATE_TIME" property="createTime"/>
+		<result column="USER_ADMIN" property="userAdmin"/>
+	</resultMap>
+	
+	<parameterMap type="com.model.User" id="parameterMap">
+		<parameter property="userId" resultMap="resultMap" />
+		<parameter property="userName" resultMap="resultMap" />
+		<parameter property="userPwd" resultMap="resultMap" />
+        <parameter property="createTime" resultMap="resultMap" />
+		<parameter property="userAdmin" resultMap="resultMap" />
+	</parameterMap>
+
+	<select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT COUNT(USER_ID) FROM USER
+		<where>
+			<if test="USER_ID != null and USER_ID != ''">
+				and USER_ID = #{USER_ID}
+			</if>
+			<if test="USER_NAME != null and USER_NAME != ''">
+				and LOCATE(#{USER_NAME},USER_NAME)>0
+			</if>
+		</where>
+	</select>
+
+	<select id="page" parameterType="java.util.Map" resultMap="resultMap">
+		SELECT USER_ID, USER_NAME, USER_PWD, CREATE_TIME,USER_ADMIN  FROM USER
+		<where>
+			<if test="USER_ID != null and USER_ID != ''">
+				and USER_ID = #{USER_ID}
+			</if>
+			<if test="USER_NAME != null and USER_NAME != ''">
+				and LOCATE(#{USER_NAME},USER_NAME)>0
+			</if>
+		</where>
+		ORDER BY CREATE_TIME DESC
+		LIMIT #{OFFSET},#{PAGE_SIZE}
+	</select>
+	
+	<insert id="insert" parameterMap="parameterMap">
+		INSERT INTO USER(USER_ID, USER_NAME, USER_PWD, CREATE_TIME,USER_ADMIN)
+		VALUES (#{userId}, #{userName}, #{userPwd}, #{createTime}, #{userAdmin})
+	</insert>
+
+	<update id="update" parameterMap="parameterMap">
+        UPDATE USER SET
+            USER_NAME = #{userName},
+            USER_PWD = #{userPwd},
+            USER_ADMIN = #{userAdmin}
+            WHERE USER_ID=#{userId}
+    </update>
+
+	<delete id="del" parameterType="java.util.List">
+		DELETE FROM USER
+		<where>
+			USER_ID in
+			<foreach item="item" collection="list" separator="," open="(" close=")" index="">
+				#{item}
+			</foreach>
+		</where>
+	</delete>
+
+	<select id="qryById" parameterType="java.lang.String" resultMap="resultMap">
+    	SELECT USER_ID, USER_NAME, USER_PWD, CREATE_TIME, USER_ADMIN FROM USER WHERE USER_ID=#{USER_ID}
+    </select>
+    
+</mapper>

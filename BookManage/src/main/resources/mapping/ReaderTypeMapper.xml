@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.ReaderTypeMapper">
+
+    <resultMap type="com.model.ReaderType" id="resultMap">
+        <id column="READER_TYPE" property="readerType"/>
+        <result column="READER_TYPE_NAME" property="readerTypeName"/>
+        <result column="BOOK_NUM" property="bookNum"/>
+        <result column="BORROW_DAYS" property="borrowDays"/>
+        <result column="RELET_DAYS" property="reletDays"/>
+    </resultMap>
+
+    <parameterMap type="com.model.ReaderType" id="parameterMap">
+        <parameter property="readerType" resultMap="resultMap" />
+        <parameter property="readerTypeName" resultMap="resultMap" />
+        <parameter property="bookNum" resultMap="resultMap" />
+        <parameter property="borrowDays" resultMap="resultMap" />
+        <parameter property="reletDays" resultMap="resultMap" />
+    </parameterMap>
+
+    <select id="count" parameterType="java.util.Map" resultType="java.lang.Integer">
+        SELECT COUNT(READER_TYPE) FROM READER_TYPE
+    </select>
+
+    <select id="page" parameterType="java.util.Map" resultMap="resultMap">
+        SELECT READER_TYPE, READER_TYPE_NAME, BOOK_NUM, BORROW_DAYS, RELET_DAYS FROM READER_TYPE
+        LIMIT #{OFFSET},#{PAGE_SIZE}
+    </select>
+
+    <insert id="insert" parameterMap="parameterMap">
+        INSERT INTO READER_TYPE
+            (READER_TYPE, READER_TYPE_NAME, BOOK_NUM, BORROW_DAYS, RELET_DAYS)
+            VALUES
+            (#{readerType}, #{readerTypeName}, #{bookNum}, #{borrowDays}, #{reletDays})
+    </insert>
+
+    <update id="update" parameterMap="parameterMap">
+        UPDATE READER_TYPE SET
+            READER_TYPE_NAME = #{readerTypeName},
+            BOOK_NUM = #{bookNum},
+            BORROW_DAYS = #{borrowDays},
+            RELET_DAYS = #{reletDays}
+            WHERE READER_TYPE = #{readerType}
+    </update>
+
+    <delete id="del" parameterType="java.util.List">
+        DELETE FROM READER_TYPE
+        <where>
+            READER_TYPE in
+            <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <select id="qryByReaderType" parameterType="java.lang.Integer" resultMap="resultMap">
+        SELECT READER_TYPE, READER_TYPE_NAME, BOOK_NUM, BORROW_DAYS, RELET_DAYS FROM READER_TYPE WHERE READER_TYPE=#{READER_TYPE}
+    </select>
+
+    <select id="listAll" resultMap="resultMap">
+        SELECT READER_TYPE, READER_TYPE_NAME, BOOK_NUM, BORROW_DAYS, RELET_DAYS FROM READER_TYPE
+    </select>
+
+</mapper>
